@@ -34,7 +34,8 @@ hs.hotkey.bind({"alt"}, "4", function()
 
         typora:selectMenuItem(select_all)
         keystroke_copy_as_markdown_in_typora()
-        local topic_x_occurrences = count_search_string_occurrences_in_large_string("Howdy", hs.pasteboard.getContents())
+        local topic_x_occurrences = count_search_string_occurrences_in_large_string("Topic %d+ %- ", hs.pasteboard.getContents())
+        print(topic_x_occurrences)
     end)
 end)
 
