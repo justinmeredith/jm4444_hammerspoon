@@ -17,6 +17,10 @@ function count_search_string_occurrences_in_large_string(search_string, large_st
     return select(2, string.gsub(large_string, search_string, ""))
 end
 
+function store_frontmost_app()
+    return hs.application.frontmostApplication()
+end
+
 
 --]*Hotkeys*[--
 
@@ -39,3 +43,17 @@ hs.hotkey.bind({"alt"}, "4", function()
     end)
 end)
 
+
+--Show/Hide the Music app
+hs.hotkey.bind({"fn"}, "f8", function()
+    local music = hs.appfinder.appFromName("Music")
+
+    if( music:isFrontmost() == false)
+    then
+        current_app_for_music_switching = store_frontmost_app()
+        hs.application.launchOrFocus("Music")
+    else
+        music:hide()
+        current_app_for_music_switching:activate()
+    end
+end)
