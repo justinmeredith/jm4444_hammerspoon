@@ -6,7 +6,7 @@ end
 --Copy text in the Typora app as markdown text
 function keystroke_copy_as_markdown_in_typora()
     activate_typora()
-    hs.eventtap.keyStroke({"shift"})
+    hs.eventtap.keyStroke({"shift"}, "right") 
     hs.eventtap.keyStroke({"cmd", "shift"}, "c")
 end
 
