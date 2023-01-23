@@ -17,6 +17,7 @@ function count_search_string_occurrences_in_large_string(search_string, large_st
     return select(2, string.gsub(large_string, search_string, ""))
 end
 
+--Returns the frontmost app as an app object
 function store_frontmost_app()
     return hs.application.frontmostApplication()
 end
@@ -53,7 +54,7 @@ hs.hotkey.bind({"fn"}, "f8", function()
         current_app_for_music_switching = store_frontmost_app()
         hs.application.launchOrFocus("Music")
     else
-        music:hide()
         current_app_for_music_switching:activate()
+        music:hide()
     end
 end)
