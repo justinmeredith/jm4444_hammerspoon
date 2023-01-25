@@ -32,6 +32,11 @@ function paste()
     hs.eventtap.keyStroke({"cmd"}, "v")
 end
 
+--Copies to the default pasteboard
+function copy()
+    hs.eventtap.keyStroke({"cmd"}, "c")
+end
+
 --Replaces the pasteboard with new content
 function replace_pasteboard(replacement)
     hs.pasteboard.clearContents()
@@ -42,11 +47,6 @@ end
 function escape_magic_characters_in_string(string)
     return string:gsub('([%^%$%(%)%%%.%[%]%*%+%-%q?])', '%%%1')
 end
-
-local string_to_edit = 'something ## Topic 2 - blah \n yadda'
-local to_replace = escape_pattern('## Topic 2 - ') -- becomes '## Topic %- '
-local substitution = '## Topic X -'
-local edited_string = string_to_edit:gsub(to_replace, substitution)
 
 
 --]*Hotkeys*[--
@@ -63,22 +63,23 @@ hs.hotkey.bind({"alt"}, "4", function()
         local select_all = {"Edit", "Selection", "Select All"}
         local copy_as_markdown = {"Edit", "Copy as Markdown"}
         local placeholder = "\n\n[40 words]\n\n[40 words]\n\n[40 words]"
-        local pasteboard = hs.pasteboard.getContents()
+        local pasteboard = nil
         local topic_x = "%#+ Topic %d+ %- .-\n"
         local new_pasteboard = nil
 
         hs.pasteboard.clearContents()
         typora:selectMenuItem(select_all)
-        typora:selectMenuItem(copy_as_markdown)
+        copy()
+        pasteboard = hs.pasteboard.getContents()
 
-        for heading in string.gmatch(pasteboard, topic_x) do
+        for heading in string.gmatch(hs.pasteboard.getContents(), topic_x) do
             local heading_without_topic_x = search_and_replace_string("%#+ Topic %d+ %- ", heading, "")
             local heading_with_placeholder = heading_without_topic_x .. placeholder
             pasteboard = string.gsub(pasteboard, heading_without_topic_x, heading_with_placeholder)
         end
 
         pasteboard = search_and_replace_string("Topic %d+ %- ", pasteboard, "")
-        replace_pasteboard(pasteboard)
+        hs.pasteboard.setContents(pasteboard)
         paste()
 
     end)
