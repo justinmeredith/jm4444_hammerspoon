@@ -42,6 +42,9 @@ end
 --]*Hotkeys*[--
 
 --Fill in topics with [40 words] 3x using the keybinding "option" + "4" + "0"
+--[[
+    Update: Still has a few bugs. Looks like the initial copying function in Typora isn't triggering for some reason. Also, the first topic (Topic 1 - ) isn't getting the placeholders like it should. 
+]]
 hs.hotkey.bind({"alt"}, "4", function()
     hs.hotkey.bind({"alt"}, "0", function()
         activate_typora()
@@ -56,7 +59,7 @@ hs.hotkey.bind({"alt"}, "4", function()
 
         hs.pasteboard.clearContents()
         typora:selectMenuItem(select_all)
-        keystroke_copy_as_markdown_in_typora()
+        typora:selectMenuItem(copy_as_markdown)
 
         for heading in string.gmatch(pasteboard, topic_x) do
             local heading_without_topic_x = search_and_replace_string("%#+ Topic %d+ %- ", heading, "")
@@ -65,7 +68,6 @@ hs.hotkey.bind({"alt"}, "4", function()
         end
 
         pasteboard = search_and_replace_string("Topic %d+ %- ", pasteboard, "")
-        print(pasteboard)
         replace_pasteboard(pasteboard)
         paste()
 
