@@ -17,18 +17,31 @@ function count_search_string_occurrences_in_large_string(search_string, large_st
     return select(2, string.gsub(large_string, search_string, ""))
 end
 
+--Searches for a particular string in a larger string and replaces that particular string with a new string
+function search_and_replace_string(search_string, large_string, replacement_string)
+    return string.gsub(large_string, search_string, replacement_string)
+end
+
 --Returns the frontmost app as an app object
 function store_frontmost_app()
     return hs.application.frontmostApplication()
 end
 
+--Pastes the default pasteboard
+function paste()
+    hs.eventtap.keyStroke({"cmd"}, "v")
+end
+
+--Replaces the pasteboard with new content
+function replace_pasteboard(replacement)
+    hs.pasteboard.clearContents()
+    hs.pasteboard.setContents(replacement)
+end
+
 
 --]*Hotkeys*[--
 
---Fill in topics with [40 words] 3x
---[[
-    Currently, this uses the keybinding "option + 4 + 0" to launch/focus Typora then choose the 'Select All' option from Typora's Menu Bar
-]]
+--Fill in topics with [40 words] 3x using the keybinding "option" + "4" + "0"
 hs.hotkey.bind({"alt"}, "4", function()
     hs.hotkey.bind({"alt"}, "0", function()
         activate_typora()
@@ -36,11 +49,26 @@ hs.hotkey.bind({"alt"}, "4", function()
         local typora = hs.appfinder.appFromName("Typora")
         local select_all = {"Edit", "Selection", "Select All"}
         local copy_as_markdown = {"Edit", "Copy as Markdown"}
+        local placeholder = "\n\n[40 words]\n\n[40 words]\n\n[40 words]"
+        local pasteboard = hs.pasteboard.getContents()
+        local topic_x = "%#+ Topic %d+ %- .-\n"
+        local new_pasteboard = nil
 
+        hs.pasteboard.clearContents()
         typora:selectMenuItem(select_all)
         keystroke_copy_as_markdown_in_typora()
-        local topic_x_occurrences = count_search_string_occurrences_in_large_string("Topic %d+ %- ", hs.pasteboard.getContents())
-        print(topic_x_occurrences)
+
+        for heading in string.gmatch(pasteboard, topic_x) do
+            local heading_without_topic_x = search_and_replace_string("%#+ Topic %d+ %- ", heading, "")
+            local heading_with_placeholder = heading_without_topic_x .. placeholder
+            pasteboard = string.gsub(pasteboard, heading_without_topic_x, heading_with_placeholder)
+        end
+
+        pasteboard = search_and_replace_string("Topic %d+ %- ", pasteboard, "")
+        print(pasteboard)
+        replace_pasteboard(pasteboard)
+        paste()
+
     end)
 end)
 
