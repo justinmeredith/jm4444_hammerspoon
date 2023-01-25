@@ -38,6 +38,16 @@ function replace_pasteboard(replacement)
     hs.pasteboard.setContents(replacement)
 end
 
+--This function escapes magic characters in a string so that the string can be used with methods like string.gsub
+function escape_magic_characters_in_string(string)
+    return string:gsub('([%^%$%(%)%%%.%[%]%*%+%-%q?])', '%%%1')
+end
+
+local string_to_edit = 'something ## Topic 2 - blah \n yadda'
+local to_replace = escape_pattern('## Topic 2 - ') -- becomes '## Topic %- '
+local substitution = '## Topic X -'
+local edited_string = string_to_edit:gsub(to_replace, substitution)
+
 
 --]*Hotkeys*[--
 
