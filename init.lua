@@ -62,7 +62,6 @@ hs.hotkey.bind({"alt"}, "4", function()
         local placeholder = "\n\n[40 words]\n\n[40 words]\n\n[40 words]"
         local pasteboard = nil
         local topic_x = "%#+ Topic %d+ %- .-\n"
-        local new_pasteboard = nil
 
         hs.pasteboard.clearContents()
         typora:selectMenuItem(select_all)
