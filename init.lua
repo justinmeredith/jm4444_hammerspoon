@@ -95,3 +95,5 @@ hs.hotkey.bind({"fn"}, "f8", function()
         music:hide()
     end
 end)
+
+--Testing 123
