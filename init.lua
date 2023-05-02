@@ -56,6 +56,7 @@ hs.hotkey.bind({"alt"}, "4", function()
     hs.hotkey.bind({"alt"}, "0", function()
         activate_typora()
     
+        --Sets the local variables for the hotkey function
         local typora = hs.appfinder.appFromName("Typora")
         local select_all = {"Edit", "Selection", "Select All"}
         local copy_as_markdown = {"Edit", "Copy as Markdown"}
@@ -63,6 +64,7 @@ hs.hotkey.bind({"alt"}, "4", function()
         local pasteboard = nil
         local topic_x = "%#+ Topic %d+ %- .-\n"
 
+        --Clears the pasteboard, selects all of the text in Typora, then copies that text to the pasteboard
         hs.pasteboard.clearContents()
         typora:selectMenuItem(select_all)
         copy()
@@ -79,6 +81,41 @@ hs.hotkey.bind({"alt"}, "4", function()
         paste()
 
     end)
+end)
+
+
+
+--Fill in topics with custom placeholders 3x per topic using the keybinding "command" + "shift" + "i" in Typora
+hs.hotkey.bind({"cmd", "shift"}, "I", function()
+    activate_typora()
+
+    --Sets the local variables for the hotkey function
+    local typora = hs.appfinder.appFromName("Typora")
+    local select_all = {"Edit", "Selection", "Select All"}
+    local copy_as_markdown = {"Edit", "Copy as Markdown"}
+    local pasteboard = nil
+
+    --Clears the pasteboard, selects all of the text in Typora, then copies that text to the pasteboard
+    hs.pasteboard.clearContents()
+    typora:selectMenuItem(select_all)
+    copy()
+    pasteboard = hs.pasteboard.getContents()
+
+     --Find the word count in the copied text
+    local word_count = string.match(pasteboard, "%*%*Length:%*%*%s+(%d[%d,]*)%s+words")
+    if word_count then
+        print("Word count: " .. word_count)
+    else
+        print("Length not found")
+    end
+
+    --Count occurrences of # Topic x - 
+    local topic_count = 0
+    for _ in string.gmatch(pasteboard, "#+ Topic %d+ %- .-\n") do
+        topic_count = topic_count + 1
+    end
+    print("Number of occurrences of # Topic x - :", topic_count)
+
 end)
 
 
