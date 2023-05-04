@@ -1,4 +1,4 @@
--- ]*Global Functions*[--
+-- ]*Global Functions*[ --
 -- Activates the Typora app
 function activate_typora()
     hs.application.launchOrFocus("Typora")
@@ -47,7 +47,7 @@ function escape_magic_characters_in_string(string)
     return string:gsub('([%^%$%(%)%%%.%[%]%*%+%-%q?])', '%%%1')
 end
 
--- ]*Hotkeys*[--
+-- ]*Hotkeys*[ --
 
 -- Fill in topics with [40 words] 3x using the keybinding "option" + "4" + "0" in Typora
 hs.hotkey.bind({"alt"}, "4", function()
@@ -137,6 +137,9 @@ hs.hotkey.bind({"cmd", "shift"}, "I", function()
         local pattern = "(#+ Topic %d+ %- .-\n)"
         local replace = "%1" .. placeholders .. placeholders .. placeholders
         local new_pasteboard = string.gsub(pasteboard, pattern, replace)
+
+        -- Remove all instances of "Topic x - " from the pasteboard
+        new_pasteboard = new_pasteboard:gsub("Topic %d+ %- ", "")
 
         -- Set the pasteboard to the modified text
         hs.pasteboard.setContents(new_pasteboard)
