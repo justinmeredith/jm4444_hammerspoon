@@ -107,6 +107,17 @@ hs.hotkey.bind({"cmd", "shift"}, "I", function()
     word_count_str = word_count_str:gsub(",", "")
     local word_count = tonumber(word_count_str)
 
+    -- Search for occurrences of "[x words]" and subtract x from word_count for each occurrence
+    for x_str in string.gmatch(pasteboard, "%[(%d+)%s*words%]") do
+        print(x_str)
+        x_str = x_str:gsub("[^%d,]", "")
+        print(x_str)
+        local x = tonumber(x_str)
+        if x then
+            word_count = word_count - x
+        end
+    end
+
     -- Count occurrences of # Topic x - 
     local topic_count = 0
     for _ in string.gmatch(pasteboard, "#+ Topic %d+ %- .-\n") do
@@ -120,8 +131,17 @@ hs.hotkey.bind({"cmd", "shift"}, "I", function()
         print("Words per placeholder: " .. words_per_placeholder)
 
         -- Create the placeholders string
-        local placeholders = string.format("[%d words]\n[%d words]\n[%d words]\n", words_per_placeholder, words_per_placeholder, words_per_placeholder)
-        print("Placeholders: " .. placeholders)
+        local placeholders = "[" .. words_per_placeholder .. " words]\n\n"
+
+        -- Add the placeholders after each topic heading
+        local pattern = "(#+ Topic %d+ %- .-\n)"
+        local replace = "%1" .. placeholders .. placeholders .. placeholders
+        local new_pasteboard = string.gsub(pasteboard, pattern, replace)
+
+        -- Set the pasteboard to the modified text
+        hs.pasteboard.setContents(new_pasteboard)
+        paste()
+
     else
         print("Cannot calculate words per placeholder")
     end
